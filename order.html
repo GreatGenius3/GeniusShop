@@ -116,6 +116,7 @@
         else
         {
             // Fallback för enskild produkt (bakåtkompatibilitet)
+            // Kommer inte användas i detta fall
             const savedProduct = sessionStorage.getItem('valdProdukt');
             if (savedProduct)
             {
@@ -139,7 +140,8 @@
         productInfo.innerHTML = '';
         let total = 0;
 
-        // Går igenom varukorgen och visar varje produkt
+        // Går igenom varukorgen och visar varje produkt från våran
+        // kundvagn
         cart.forEach(item => {
             const productDiv = document.createElement('div');
             productDiv.className = 'mb-3 pb-3 border-bottom';

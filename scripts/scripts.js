@@ -71,47 +71,53 @@ function displayProducts(products, apiSource)
             </div>
         `;
 
-        // Fluttade detta till en egen funktionsom heter addToCart nedan
-        //   const button = productDiv.querySelector("button");
-        /// button.addEventListener("click", function() {
-        //    localStorage.setItem("valdProdukt", JSON.stringify(product));
-        //   window.location.href = "order.html";
+        // Lägg till produktens information i columnen (col)
         col.appendChild(productDiv);
+        // Visa nu den inlagda produkten på sidans fält productList "product-list"
         productList.appendChild(col);
     });
 }
 
 // Varukorgsfunktioner
+// Hämtar kundvagnen (objektet cart) från den lokala webbläsarens kontainer
 function getCart() {
     const cart = localStorage.getItem('cart');
     return cart ? JSON.parse(cart) : [];
 }
 
+// Sparar kundvagnen (objektet cart) till den lokala webbläsarens kontainer
 function saveCart(cart) {
     localStorage.setItem('cart', JSON.stringify(cart));
-    updateCartIcon();
+    updateCartIcon(); // Uppdatera menyn ovan med antalet produkter i varukorgen
 }
 
+// Lägger till en produkt i varukorgen,
+// Först hämtar den den existerande varukorgen (cart) från kontainern
 function addToCart(id, title, price, image) {
     const cart = getCart();
-    const existingItem = cart.find(item => item.id === id);
-    
+    const existingItem = cart.find(item => item.id === id); // Hittar en existerande produkt i varukorgen
+
+    // Finns produkten i varukorgen, öka antalet
     if (existingItem) {
         existingItem.quantity += 1;
+        // Annars lägger vi en ny titel i varukorgen
     } else {
         cart.push({ id, title, price, image, quantity: 1 });
     }
-    
+
+    // Spara sedan till cart
     saveCart(cart);
     showCartNotification('Produkten har lagts till i varukorgen!');
 }
 
+// Funktion som tar bort en produkt från varukorgen
 function removeFromCart(id) {
     const cart = getCart();
     const updatedCart = cart.filter(item => item.id !== id);
     saveCart(updatedCart);
 }
 
+// Uppdatera antalet produkter i varukorgen
 function updateQuantity(id, quantity) {
     const cart = getCart();
     const item = cart.find(item => item.id === id);
@@ -126,11 +132,13 @@ function updateQuantity(id, quantity) {
     }
 }
 
+// Tar fram totala summan från varukorgen
 function getCartTotal() {
     const cart = getCart();
     return cart.reduce((total, item) => total + (item.price * item.quantity), 0);
 }
 
+// Tar fram antalet produkter i varukorgen
 function getCartItemCount() {
     const cart = getCart();
     return cart.reduce((total, item) => total + item.quantity, 0);
@@ -168,13 +176,14 @@ function updateCartIcon() {
 }
 
 // Funktion för att gå direkt till beställning (behålls för bakåtkompatibilitet)
+// Används inte just nu
 function orderDirectly(id, title, price, image) {
     const product = { id, title, price, image };
     localStorage.setItem("valdProdukt", JSON.stringify(product));
     window.location.href = 'order.html';
 }
 
-// Funktion som anropas när vi trycker på beställ knappen
+// Här sätter vi knappen "Bekräfta köp" till följande funktion
 const form = document.querySelector("form");
 if (form) {
     // Vi lägger till en event listener på formuläret som lyssnar på submit-eventet
@@ -182,11 +191,9 @@ if (form) {
 
         e.preventDefault();
         if (validateAll()) {
-            const produkt = JSON.parse(localStorage.getItem("valdProdukt"));
             alert(`Tack för din beställning har tagits emot! Vi behandlar din order så snart som möjligt.`);
 
-            // Rensa både enskild produkt och hela varukorgen
-            // localStorage.removeItem('valdProdukt');
+            // Rensa hela varukorgen
             localStorage.removeItem('cart');
             
             // Uppdatera varukorgsikonen
