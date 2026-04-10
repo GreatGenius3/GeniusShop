@@ -121,10 +121,12 @@ function removeFromCart(id) {
 function updateQuantity(id, quantity) {
     const cart = getCart();
     const item = cart.find(item => item.id === id);
-    
+
+    // Hittar en existerande produkt i varukorgen
     if (item) {
         if (quantity <= 0) {
             removeFromCart(id);
+            // Om antalet är 0, ta bort produkt
         } else {
             item.quantity = quantity;
             saveCart(cart);
@@ -184,6 +186,7 @@ function orderDirectly(id, title, price, image) {
 }
 
 // Här sätter vi knappen "Bekräfta köp" till följande funktion
+// Först ta fram <form> blocket från order.html
 const form = document.querySelector("form");
 if (form) {
     // Vi lägger till en event listener på formuläret som lyssnar på submit-eventet
@@ -276,8 +279,28 @@ function generateFooter() {
     }
 }
 
+// Navbar toggler funktionalitet för mobilvy
+function setupNavbarToggler() {
+    const toggler = document.querySelector('.navbar-toggler');
+    const collapse = document.querySelector('.navbar-collapse');
+    
+    if (toggler && collapse) {
+        toggler.addEventListener('click', function() {
+            collapse.classList.toggle('show');
+        });
+        
+        // Stäng menyn när man klickar utanför
+        document.addEventListener('click', function(e) {
+            if (!toggler.contains(e.target) && !collapse.contains(e.target)) {
+                collapse.classList.remove('show');
+            }
+        });
+    }
+}
+
 // kör funktionen när sidan laddas
 document.addEventListener('DOMContentLoaded', function() {
     fetchProducts();
     generateFooter();
+    setupNavbarToggler();
 });
